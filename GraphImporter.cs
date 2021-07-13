@@ -37,14 +37,13 @@ namespace Dijkstra
                 {
                     string[] edgeComponents = line.Split(" ");
 
-                    if (edgeComponents.Length == 3)
+                    if (edgeComponents.Length == 3) // The first line of the input data only has 2 numbers, n and m and does not contain an edge. We want to ignore it.
                     {
                         Edge edge = new(edgeComponents[0], edgeComponents[1], Int32.Parse(edgeComponents[2]));
                         edgeList.Add(edge);
                     }                    
                 }
             }
-
             return edgeList;
         }
     }
