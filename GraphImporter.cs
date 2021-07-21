@@ -26,9 +26,11 @@ namespace Dijkstra
             }
         }
 
-        public List<Edge> GetGraphFromFile()
+        public Tuple<List<Edge>, List<Vertex>> GetGraphFromFile()
         {
             List<Edge> edgeList = new();
+            List<string> vertexStrings = new();
+            List<Vertex> vertexList = new();
 
             using StreamReader sr = new(filePath);
             {                
@@ -39,12 +41,25 @@ namespace Dijkstra
 
                     if (edgeComponents.Length == 3) // The first line of the input data only has 2 numbers, n and m and does not contain an edge. We want to ignore it.
                     {
-                        Edge edge = new(edgeComponents[0], edgeComponents[1], Int32.Parse(edgeComponents[2]));
+                        if (vertexStrings.Contains(edgeComponents[0]) == false)
+                        {
+                            vertexStrings.Add(edgeComponents[0]);
+                            Vertex newVertex = new Vertex(edgeComponents[0]);
+                            vertexList.Add(newVertex);
+                        }
+                        if (vertexStrings.Contains(edgeComponents[1]) == false)
+                        {
+                            vertexStrings.Add(edgeComponents[1]);
+                            Vertex newVertex = new Vertex(edgeComponents[1]);
+                            vertexList.Add(newVertex);
+                        }
+
+                        Edge edge = new(vertexList.Find(x => x.name == edgeComponents[0]), vertexList.Find(x => x.name == edgeComponents[1]), Int32.Parse(edgeComponents[2]));
                         edgeList.Add(edge);
                     }                    
                 }
             }
-            return edgeList;
+            return new Tuple<List<Edge>, List<Vertex>>(edgeList, vertexList);
         }
     }
 }

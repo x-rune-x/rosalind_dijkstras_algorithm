@@ -8,14 +8,14 @@ namespace Dijkstra
 {
     class Edge
     {
-        public string v1;
-        public string v2;
+        public Vertex vertex1;
+        public Vertex vertex2;
         public int distance;
 
-        public Edge(string vertex1, string vertex2, int edgeDistance)
+        public Edge(Vertex v1, Vertex v2, int edgeDistance)
         {
-            v1 = vertex1;
-            v2 = vertex2;
+            vertex1 = v1;
+            vertex2 = v2;
             distance = edgeDistance;
         }
     }
