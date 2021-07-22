@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 
 namespace Dijkstra
 {
@@ -14,83 +15,41 @@ namespace Dijkstra
             var graph = graphImporter.GetGraphFromFile();
             var edgeList = graph.Item1;
             var vertexList = graph.Item2;
+            var exploredVertices = new List<Vertex>();
 
-            foreach (Vertex vertex in vertexList)
+            while (vertexList.Count > 0) // Each pass through the loop explores a new vertex which is then removed from the list at the end and added to the explored list.
             {
-                Console.WriteLine(vertex.name);
+                vertexList = vertexList.OrderBy(x => x.shortestDistanceToVertex).ToList(); // Create a priority queue where the vertex with the shortest known path is next to be explored.
+                var vertexToExplore = vertexList[0];
+
+                var edgesToExplore = edgeList.Where(x => x.vertex1.name == vertexToExplore.name).ToList();
+                foreach (Edge edge in edgesToExplore)
+                {
+                    if ((edge.vertex1.shortestDistanceToVertex + edge.time) < edge.vertex2.shortestDistanceToVertex)
+                    {
+                        edge.vertex2.shortestDistanceToVertex = edge.vertex1.shortestDistanceToVertex + edge.time;
+                        edge.vertex2.precedingVertexInShortestPath = edge.vertex1.name;
+                    }
+                }
+
+                vertexList.Remove(vertexToExplore);
+                exploredVertices.Add(vertexToExplore);
             }
 
-            foreach (Edge edge in edgeList)
+            exploredVertices = exploredVertices.OrderBy(x => x.name).ToList(); // Following code is mostly formatting to make Rosalind happy.           
+
+            using StreamWriter sw = new("C:/Users/masterofdoom/code projects/C#/Dijkstra/solution.txt");
             {
-                Console.WriteLine($"edge is {edge.vertex1.name} to {edge.vertex2.name} with a time of {edge.distance}");
-
-                //if (vertexList.Contains(edge.v1) == false)
-                //{
-                //    vertexList.Add(edge.v1);
-                //}
-                //if (vertexList.Contains(edge.v2) == false)
-                //{
-                //    vertexList.Add(edge.v2);
-                //}
+                foreach (Vertex vertex in exploredVertices)
+                {
+                    if (vertex.shortestDistanceToVertex == double.PositiveInfinity)
+                    {
+                        vertex.shortestDistanceToVertex = -1;
+                    }
+                    Console.WriteLine($"{vertex.name}, {vertex.shortestDistanceToVertex}");
+                    sw.Write(vertex.shortestDistanceToVertex + " ");
+                }
             }
-            //var unvisitedVertices = vertexList.Where(x => x != "1").ToList();
-            //var verticesToExplore = vertexList.Where(x => x == "1").ToList(); // Initiialse the list of vertices to explore from to 1 since that is the starting point.
-
-            //List<PathToVertex> knownShortestPaths = new();
-
-            //foreach (string vertex in vertexList)
-            //{
-            //    if (vertex == "1")
-            //    {
-            //        knownShortestPaths.Add(new PathToVertex(vertex, 0));
-            //    }
-            //    else
-            //    {
-            //        knownShortestPaths.Add(new PathToVertex(vertex, double.PositiveInfinity));
-            //    }
-            //}
-
-            //while (unvisitedVertices.Count > 0 && verticesToExplore.Count > 0)
-            //{
-            //    List<string> vertexAddList = new();
-            //    foreach (string vertex in verticesToExplore)
-            //    {                    
-            //        foreach (Edge edge in graph.Where(x => x.v1 == vertex))
-            //        {
-            //            var pathToSource = knownShortestPaths.Where(x => x.vertex == edge.v1).First();
-            //            double currentDistanceToSource = pathToSource.distance;
-
-            //            if (unvisitedVertices.Contains(edge.v2) == true)
-            //            {
-            //                unvisitedVertices.Remove(edge.v2);
-            //                vertexAddList.Add(edge.v2);
-
-            //                var shortestPathToVertex = knownShortestPaths.Where(x => x.vertex == edge.v2).First();
-            //                var indexOfPathToVertex = knownShortestPaths.FindIndex(a => a.vertex == edge.v2);
-            //                if (edge.distance + currentDistanceToSource < shortestPathToVertex.distance)
-            //                {
-            //                    shortestPathToVertex.distance = edge.distance + currentDistanceToSource;
-            //                    shortestPathToVertex.direction = edge.v1;
-            //                    knownShortestPaths[indexOfPathToVertex] = shortestPathToVertex;
-            //                }
-            //            }
-            //        }
-            //    }
-            //    verticesToExplore.Clear();
-            //    verticesToExplore.AddRange(vertexAddList);
-            //}
-            //foreach (PathToVertex path in knownShortestPaths)
-            //{
-            //    if (path.distance == double.PositiveInfinity)
-            //    {
-            //        path.distance = -1;
-            //    }
-            //}
-
-            //foreach (PathToVertex path in knownShortestPaths)
-            //{
-            //    Console.WriteLine(path.distance);
-            //}
         }
     }
 }

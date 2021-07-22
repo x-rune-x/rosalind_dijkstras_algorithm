@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 
 namespace Dijkstra
@@ -26,7 +23,7 @@ namespace Dijkstra
             }
         }
 
-        public Tuple<List<Edge>, List<Vertex>> GetGraphFromFile()
+        public Tuple<List<Edge>, List<Vertex>> GetGraphFromFile() // By returning a tuple, we can return both all the vertices and all the edges of the graph in seperate lists.
         {
             List<Edge> edgeList = new();
             List<string> vertexStrings = new();
