@@ -9,7 +9,7 @@ namespace Dijkstra
     {
         static void Main(string[] args)
         {
-            GraphImporter graphImporter = new GraphImporter("C:/Users/masterofdoom/code projects/C#/Dijkstra/sampleData.txt");
+            GraphImporter graphImporter = new GraphImporter("C:/Users/masterofdoom/code projects/C#/Dijkstra/rosalind_dij.txt");
             Console.WriteLine($"The number of vertices is {graphImporter.numberOfVertices}, the number of edges is {graphImporter.numberOfEdges}");
 
             var graph = graphImporter.GetGraphFromFile();

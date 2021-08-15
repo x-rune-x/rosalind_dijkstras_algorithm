@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Dijkstra
 {
@@ -26,7 +27,7 @@ namespace Dijkstra
         public Tuple<List<Edge>, List<Vertex>> GetGraphFromFile() // By returning a tuple, we can return both all the vertices and all the edges of the graph in seperate lists.
         {
             List<Edge> edgeList = new();
-            List<string> vertexStrings = new();
+            // List<string> vertexStrings = new();
             List<Vertex> vertexList = new();
 
             using StreamReader sr = new(filePath);
@@ -38,24 +39,32 @@ namespace Dijkstra
 
                     if (edgeComponents.Length == 3) // The first line of the input data only has 2 numbers, n and m and does not contain an edge. We want to ignore it.
                     {
-                        if (vertexStrings.Contains(edgeComponents[0]) == false)
+                        int originVertex = Int32.Parse(edgeComponents[0]);
+                        int destinationVertex = Int32.Parse(edgeComponents[1]);
+
+                        if (!vertexList.Exists(x => x.name == originVertex))
                         {
-                            vertexStrings.Add(edgeComponents[0]);
-                            Vertex newVertex = new Vertex(edgeComponents[0]);
-                            vertexList.Add(newVertex);
+                            vertexList.Add(new Vertex(originVertex));
                         }
-                        if (vertexStrings.Contains(edgeComponents[1]) == false)
-                        {
-                            vertexStrings.Add(edgeComponents[1]);
-                            Vertex newVertex = new Vertex(edgeComponents[1]);
-                            vertexList.Add(newVertex);
+                        if (!vertexList.Exists(x => x.name == destinationVertex))
+                        {                          
+                            vertexList.Add(new Vertex(destinationVertex));
                         }
 
-                        Edge edge = new(vertexList.Find(x => x.name == edgeComponents[0]), vertexList.Find(x => x.name == edgeComponents[1]), Int32.Parse(edgeComponents[2]));
+                        Edge edge = new(vertexList.Find(x => x.name == originVertex), vertexList.Find(x => x.name == destinationVertex), Int32.Parse(edgeComponents[2]));
                         edgeList.Add(edge);
                     }                    
                 }
             }
+
+            for (int i = 1; i <= numberOfVertices; i++) // This step is to account for vertices that are not part of an edge.
+            {
+                if (!vertexList.Exists(x => x.name == i))
+                {
+                    vertexList.Add(new Vertex(i));
+                }
+            }
+
             return new Tuple<List<Edge>, List<Vertex>>(edgeList, vertexList);
         }
     }
